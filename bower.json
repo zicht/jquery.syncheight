@@ -1,0 +1,20 @@
+{
+  "name": "zicht-jquery-syncheight",
+  "version": "1.0.0",
+  "authors": [
+    "Joppe Aarts <joppe@zicht.nl>"
+  ],
+  "description": "Sync the height of cols",
+  "main": "src/jquery.syncheight.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.10"
+  }
+}
