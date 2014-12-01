@@ -1,29 +1,36 @@
-/*global define*/
+/*global jQuery, window*/
 
-define(['jquery', 'underscore'], function ($, _) {
+(function (win, $) {
     'use strict';
 
     var $win = $(window),
-        blocks = [],
-        Block;
+        containers = [],
+        createContainer,
+        createElement,
+        getHighest,
+        syncHeight;
 
-    $win.on('resize', function () {
-        _.each(blocks, function (block) {
-            block.rearrange();
+    $win.on('resize load', function () {
+        $.each(containers, function (i, container) {
+            container.rearrange();
         });
     });
 
-    function createElement($el) {
+    /**
+     * @param {jQuery} $el
+     * @returns {{getHeight: Function, setHeight: Function, getTop: Function}}
+     */
+    createElement = function ($el) {
         var style = $el.get(0).style;
 
         return {
             getHeight: function () {
-                var realHeight,
-                    height = $el.outerHeight();
+                var height = style.height,
+                    realHeight;
 
                 style.height = 'auto';
                 realHeight = $el.outerHeight();
-                $el.height(height);
+                style.height = height;
 
                 return realHeight;
             },
@@ -36,55 +43,75 @@ define(['jquery', 'underscore'], function ($, _) {
                 return $el.offset().top;
             }
         };
-    }
+    };
 
-    function getHighest(elements) {
-        return _.reduce(elements, function (height, element) {
-            return Math.max(element.getHeight(), height);
-        }, 0);
-    }
+    /**
+     * @param {Array} elements
+     * @returns {Number}
+     */
+    getHighest = function (elements) {
+        var highest = 0;
 
-    function syncHeight(elements) {
+        $.each(elements, function (i, element) {
+            highest = Math.max(element.getHeight(), highest);
+        });
+
+        return highest;
+    };
+
+    /**
+     * @param {Array} elements
+     */
+    syncHeight = function (elements) {
         var height = getHighest(elements);
 
-        _.each(elements, function (element) {
+        $.each(elements, function (i, element) {
             element.setHeight(height);
         });
-    }
+    };
 
-    Block = function ($elements) {
-        this.elements = _.map($elements, function (el) {
-            return createElement($(el));
+    /**
+     * @param {jQuery} $elements
+     * @returns {{rearrange: Function}}
+     */
+    createContainer = function ($elements) {
+        var elements = $.map($elements, function (el) {
+                return createElement($(el));
+            }),
+            container;
+
+        container = {
+            rearrange: function () {
+                var top = null,
+                    row = [];
+
+                $.each(elements, function (i, element) {
+                    if (element.getTop() !== top) {
+                        syncHeight(row);
+
+                        top = element.getTop();
+                        row = [];
+                    }
+
+                    row.push(element);
+                });
+
+                syncHeight(row);
+            }
+        };
+
+        container.rearrange();
+
+        return container;
+    };
+
+    /**
+     * @param {string} elements
+     * @returns {jQuery}
+     */
+    $.fn.syncHeight = function (elements) {
+        return this.each(function () {
+            containers.push(createContainer($(elements)));
         });
     };
-    Block.prototype = {
-        rearrange: function () {
-            var top = null,
-                row = [];
-
-            _.each(this.elements, function (element) {
-                if (element.getTop() !== top) {
-                    syncHeight(row);
-
-                    top = element.getTop();
-                    row = [];
-                }
-
-                row.push(element);
-            });
-
-            syncHeight(row);
-        }
-    };
-
-    return {
-        create: function ($containers, elements) {
-            $containers.each(function () {
-                var block = new Block($(this).find(elements));
-
-                block.rearrange();
-                blocks.push(block);
-            });
-        }
-    };
-});
+}(window, jQuery));
