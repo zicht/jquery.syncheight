@@ -36,7 +36,7 @@
             },
 
             setHeight: function (height) {
-                $el.height(height);
+                $el.outerHeight(height);
             },
 
             getTop: function () {
@@ -63,11 +63,15 @@
      * @param {Array} elements
      */
     syncHeight = function (elements) {
-        var height = getHighest(elements);
+        var height;
 
-        $.each(elements, function (i, element) {
-            element.setHeight(height);
-        });
+        if (0 < elements.length) {
+            height = getHighest(elements);
+
+            $.each(elements, function (i, element) {
+                element.setHeight(height);
+            });
+        }
     };
 
     /**
