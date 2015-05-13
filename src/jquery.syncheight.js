@@ -111,7 +111,7 @@
      */
     $.fn.syncHeight = function (elements) {
         return this.each(function () {
-            containers.push(createContainer($(elements)));
+            containers.push(createContainer($(this).find(elements)));
         });
     };
 }(window, jQuery));
