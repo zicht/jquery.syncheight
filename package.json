@@ -1,0 +1,18 @@
+{
+  "name": "zicht-jquery-syncheight",
+  "version": "1.2.0",
+  "description": "Sync the height of cols",
+  "main": "src/jquery.syncheight.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zicht/jquery.syncheight.git"
+  },
+  "author": "Zicht Online <info@zicht.nl>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zicht/jquery.syncheight/issues"
+  },
+  "homepage": "https://github.com/zicht/jquery.syncheight#readme"
+}
